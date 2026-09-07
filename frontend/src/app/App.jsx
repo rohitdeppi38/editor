@@ -37,6 +37,30 @@ function App() {
   );
 };
 
+const handleJoin = () => {
+  const input = document.querySelector('input');
+  if(input.value.trim() !== ''){
+    setUsername(input.value.trim());
+  }
+}
+
+if(!username){
+  return (
+    <main className='h-screen w-full bg-gray-950 flex gap-4 p-4'>
+      <div className='h-screen w-full flex justify-center items-center'>
+        <input placeholder="Enter your username..." 
+        className='p-2 rounded-md outline-none text-black'
+        
+        />
+
+        <button className='p-2 rounded-md bg-amber-50 text-black ml-2'
+        onClick={handleJoin}
+        >Join</button>
+      </div>
+    </main>
+  )
+}
+
   return (
     <main className='h-screen w-full bg-gray-950 flex gap-4 p-4'>
       <aside className='h-full w-[40%] rounded-md overflow-hidden bg-amber-50'>
