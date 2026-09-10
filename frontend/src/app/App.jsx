@@ -21,6 +21,8 @@ function App() {
   const ydoc = useMemo(() => new Y.Doc, []);
   const yText = useMemo(() => ydoc.getText("monaco"), [ydoc]);
 
+  const states =  Array.from(provider.awareness.getStates().values());
+
   const handleMount = (editor) => {
     editorRef.current = editor;
 
@@ -43,8 +45,14 @@ function App() {
 
         provider.awareness.on('change',()=>{
           const states = Array.from(provider.awareness.getStates().values());
-          setUsers(states.map(state=>state.user).filter(user=>Boolean(user.username)))
-        })
+          setUsers(states.filter(user=> user && user.username).map(state=>state.user));
+        });
+
+        function handleBeforeUnload(){
+          provider.awareness.setLocalState("user",null);
+        }
+
+        window.addEventListener("beforeunload",handleBeforeUnload);
 
         const monacoBinding = new MonacoBinding(
           yText,
@@ -52,6 +60,12 @@ function App() {
           new Set([editorRef.current]),
           provider.awareness
         );
+
+        return ()=>{
+          monacoBinding.destroy(),
+          provider.disconnect,
+          window.removeEventListener("beforeunload",handleBeforeUnload)
+        }
 
       }
 
@@ -80,7 +94,16 @@ function App() {
     return (
       <main className='h-screen w-full bg-gray-950 flex gap-4 p-4'>
         <aside className='h-full w-[40%] rounded-md overflow-hidden bg-amber-50'>
-
+          <h2 className='text-2xl font-bold bg-gray-800 text-white rounded mb-2'>Users</h2>
+          <ul className = 'p-4'> 
+            {
+              users.map((user, index) => (
+                <li key={index} className='p-2 border-b border-gray-300'>
+                  {user.username}
+                </li>
+              ))
+            }
+          </ul>
         </aside>
 
         <section className='hfull w-[60%] bg-neutral-800 rounded-lg overflow-hidden'>
