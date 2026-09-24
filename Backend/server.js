@@ -7,6 +7,7 @@ import {YSocketIO} from 'y-socket.io/dist/server';
 const app = express();
 const server = http.createServer(app);
 
+
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static("public"));
